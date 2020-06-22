@@ -8,16 +8,30 @@ export default {
   decorators: [withKnobs],
 };
 
+const makeObj = (array) => {
+  const obj = {};
+  for (let i = 0; i < array.length; i += 1) {
+    obj[array[i]] = array[i];
+  }
+  return obj;
+};
+
 export const Default = () => {
-  const typeSelect = {
-    pawn: 'pawn',
-    queen: 'queen',
-    king: 'king',
-    bishop: 'bishop',
-    knight: 'knight',
-    rook: 'rook',
-  };
-  const type = options('Name', typeSelect, 'knight', { display: 'select' });
+  const typeSelect = makeObj([
+    'Whp',
+    'Whn',
+    'Whb',
+    'Whr',
+    'Whq',
+    'Whk',
+    'Blp',
+    'Bln',
+    'Blb',
+    'Blr',
+    'Blq',
+    'Blk',
+  ]);
+  const type = options('Name', typeSelect, 'Whp', { display: 'select' });
   const colorSelect = {
     black: 'black',
     white: 'white',
