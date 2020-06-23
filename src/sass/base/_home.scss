@@ -3,3 +3,17 @@
 html {
   font-size: 62.5%; // 1 rem = 10px; 10px/16px - 62.5%
 }
+
+button {
+  display: block;
+
+  &:active {
+    outline: 0;
+    padding: 0;
+  }
+
+  &:focus {
+    outline: 0;
+    padding: 0;
+  }
+}
