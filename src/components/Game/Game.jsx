@@ -32,6 +32,7 @@ export const Game = () => {
     const coordFirst = coord[0];
     const coordSecond = coord[1];
     const copyBoardRep = [...boardRep];
+
     if (
       (firstClick && type === '') ||
       (firstClick && type.substring(0, 2) !== player)
@@ -60,6 +61,7 @@ export const Game = () => {
       setPlayerTurn();
       setFirstCoord([]);
     }
+
     setFirstClick(!firstClick);
     setBoardRep(copyBoardRep);
   };
@@ -79,11 +81,37 @@ export const Game = () => {
     setLegalMoves(tempMoves);
   };
 
+  const getKingMoves = (coord) => {
+    const generateNeighbors = [
+      [-1, 1],
+      [-1, 0],
+      [-1, -1],
+      [0, 1],
+      [0, 0],
+      [0, -1],
+      [1, 1],
+      [1, 0],
+      [1, -1],
+    ];
+    const reducer = (acc, curr) => [
+      ...acc,
+      [coord[0] + curr[0], coord[1] + curr[1]],
+    ];
+
+    const tempMoves = generateNeighbors.reduce(reducer, []);
+
+    setLegalMoves(tempMoves);
+  };
+
   const getLegalMoves = (coord, type) => {
-    if (type === 'Whp' && firstClick) {
-      getPawnMoves(coord, type);
-    } else if (type === 'Blp' && firstClick) {
-      getPawnMoves(coord, type);
+    if (firstClick) {
+      if (type === 'Whp') {
+        getPawnMoves(coord, type);
+      } else if (type === 'Blp') {
+        getPawnMoves(coord, type);
+      } else if (type === 'Whk' || type === 'Blk') {
+        getKingMoves(coord);
+      }
     }
   };
 
