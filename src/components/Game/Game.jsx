@@ -103,6 +103,28 @@ export const Game = () => {
     setLegalMoves(tempMoves);
   };
 
+  const getKnightMoves = (coord) => {
+    const generateLegalMoves = [
+      [-2, 1],
+      [-1, 2],
+      [0, 0],
+      [1, 2],
+      [2, 1],
+      [-2, -1],
+      [-1, -2],
+      [1, -2],
+      [2, -1],
+    ];
+    const reducer = (acc, curr) => [
+      ...acc,
+      [coord[0] + curr[0], coord[1] + curr[1]],
+    ];
+
+    const tempMoves = generateLegalMoves.reduce(reducer, []);
+
+    setLegalMoves(tempMoves);
+  };
+
   const getLegalMoves = (coord, type) => {
     if (firstClick) {
       if (type === 'Whp') {
@@ -111,6 +133,8 @@ export const Game = () => {
         getPawnMoves(coord, type);
       } else if (type === 'Whk' || type === 'Blk') {
         getKingMoves(coord);
+      } else if (type === 'Whn' || type === 'Bln') {
+        getKnightMoves(coord);
       }
     }
   };

@@ -2,11 +2,12 @@
 
 .square {
   border: 1px solid $color--white;
+  cursor: pointer;
   height: 6.2rem;
-  width: 6.2rem;
+  line-height: 50px;
   text-align: center;
   vertical-align: middle;
-  line-height: 50px;
+  width: 6.2rem;
 
   &__white {
     background-color: rgb(210, 180, 140);
