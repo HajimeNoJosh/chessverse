@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import './Piece.scss';
-
 import BlackPawn from '../../assets/svg/blackpawn.svg';
 import WhitePawn from '../../assets/svg/whitepawn.svg';
 import BlackKnight from '../../assets/svg/blackknight.svg';
