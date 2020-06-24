@@ -125,6 +125,44 @@ export const Game = () => {
     setLegalMoves(tempMoves);
   };
 
+  const getRookMoves = (coord) => {
+    const tempMoves = [];
+    const generateUp = () => {
+      const tempUpMoves = [];
+      for (let i = coord[0]; i >= 0; i -= 1) {
+        tempUpMoves.push([i, coord[1]]);
+      }
+      tempMoves.push(...tempUpMoves);
+    };
+    const generateDown = () => {
+      const tempUpMoves = [];
+      for (let i = coord[0]; i < 8; i += 1) {
+        tempUpMoves.push([i, coord[1]]);
+      }
+      tempMoves.push(...tempUpMoves);
+    };
+    const generateRight = () => {
+      const tempRightMoves = [];
+      for (let i = coord[1]; i < 8; i += 1) {
+        tempRightMoves.push([coord[0], i]);
+      }
+      tempMoves.push(...tempRightMoves);
+    };
+    const generateLeft = () => {
+      const tempLeftMoves = [];
+      for (let i = coord[1]; i >= 0; i -= 1) {
+        tempLeftMoves.push([coord[0], i]);
+      }
+      tempMoves.push(...tempLeftMoves);
+    };
+    generateUp();
+    generateDown();
+    generateLeft();
+    generateRight();
+
+    setLegalMoves(tempMoves);
+  };
+
   const getLegalMoves = (coord, type) => {
     if (firstClick) {
       if (type === 'Whp') {
@@ -135,6 +173,8 @@ export const Game = () => {
         getKingMoves(coord);
       } else if (type === 'Whn' || type === 'Bln') {
         getKnightMoves(coord);
+      } else if (type === 'Whr' || type === 'Blr') {
+        getRookMoves(coord);
       }
     }
   };
