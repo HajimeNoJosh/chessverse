@@ -66,6 +66,7 @@ Piece.propTypes = {
     'Blr',
     'Blq',
     'Blk',
+    '',
   ]),
 };
 

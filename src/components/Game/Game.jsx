@@ -16,23 +16,91 @@ export const Game = () => {
   ]);
   const [currentPiece, setCurentPiece] = useState('');
   const [firstClick, setFirstClick] = useState(true);
+  const [player, setPlayer] = useState('Wh');
+  const [firstCoord, setFirstCoord] = useState([]);
+  const [legalMoves, setLegalMoves] = useState([]);
+
+  const setPlayerTurn = () => {
+    if (player === 'Wh') {
+      setPlayer('Bl');
+    } else {
+      setPlayer('Wh');
+    }
+  };
 
   const movePiece = (coord, type) => {
     const coordFirst = coord[0];
     const coordSecond = coord[1];
     const copyBoardRep = [...boardRep];
-    setFirstClick(!firstClick);
-    if (firstClick && type !== '') {
+    if (
+      (firstClick && type === '') ||
+      (firstClick && type.substring(0, 2) !== player)
+    ) {
+      return;
+    }
+
+    if (!firstClick) {
+      if (!checkLegalMove(coord)) {
+        return;
+      }
+      setLegalMoves([]);
+    }
+
+    if (firstClick) {
       copyBoardRep[coordFirst][coordSecond] = '';
       setCurentPiece(type);
+      setFirstCoord(coord);
+    } else if (coord.toString() === firstCoord.toString()) {
+      copyBoardRep[coordFirst][coordSecond] = currentPiece;
+      setCurentPiece('');
+      setFirstCoord([]);
     } else {
       copyBoardRep[coordFirst][coordSecond] = currentPiece;
       setCurentPiece('');
+      setPlayerTurn();
+      setFirstCoord([]);
     }
+    setFirstClick(!firstClick);
     setBoardRep(copyBoardRep);
   };
 
+  const getPawnMoves = (coord, type) => {
+    const tempMoves = [coord];
+    for (let i = 1; i <= 2; i += 1) {
+      let tempArray = null;
+      if (type === 'Whp') {
+        tempArray = [coord[0] - i, coord[1]];
+      } else {
+        tempArray = [coord[0] + i, coord[1]];
+      }
+
+      tempMoves.push(tempArray);
+    }
+    setLegalMoves(tempMoves);
+  };
+
+  const getLegalMoves = (coord, type) => {
+    if (type === 'Whp' && firstClick) {
+      getPawnMoves(coord, type);
+    } else if (type === 'Blp' && firstClick) {
+      getPawnMoves(coord, type);
+    }
+  };
+
+  const checkLegalMove = (coord) => {
+    let moveIsLegal = false;
+    if (!firstClick) {
+      for (let i = 0; i < legalMoves.length; i += 1) {
+        if (legalMoves[i].toString() === coord.toString()) {
+          moveIsLegal = true;
+        }
+      }
+    }
+    return moveIsLegal;
+  };
+
   const onClick = (coord, type) => {
+    getLegalMoves(coord, type);
     movePiece(coord, type);
   };
 

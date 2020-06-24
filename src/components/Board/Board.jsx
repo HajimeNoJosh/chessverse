@@ -15,32 +15,57 @@ export const Board = ({ boardRep, onClick }) => {
 
   const board = [];
   const isEven = (num) => num % 2 === 0;
+  let number = 0;
 
   for (let i = 0; i < 8; i += 1) {
     const rows = [];
+    number += i;
     for (let j = 0; j < 8; j += 1) {
       const type = boardArr[j][i];
+      const coord = [j, i];
       if (isEven(i) && isEven(j)) {
         rows.push(
-          <Square type={type} coord={[j, i]} onClick={onClick} color="white">
+          <Square
+            key={coord}
+            type={type}
+            coord={coord}
+            onClick={onClick}
+            color="white"
+          >
             <Piece type={type} />
           </Square>,
         );
       } else if (!isEven(i) && !isEven(j)) {
         rows.push(
-          <Square type={type} coord={[j, i]} onClick={onClick} color="white">
+          <Square
+            key={coord}
+            type={type}
+            coord={coord}
+            onClick={onClick}
+            color="white"
+          >
             <Piece type={type} />
           </Square>,
         );
       } else {
         rows.push(
-          <Square type={type} coord={[j, i]} onClick={onClick} color="black">
+          <Square
+            key={coord}
+            type={type}
+            coord={coord}
+            onClick={onClick}
+            color="black"
+          >
             <Piece type={type} />
           </Square>,
         );
       }
     }
-    board.push(<div className="board__rows">{rows}</div>);
+    board.push(
+      <div key={number} className="board__rows">
+        {rows}
+      </div>,
+    );
   }
 
   return <div className="board">{board}</div>;
