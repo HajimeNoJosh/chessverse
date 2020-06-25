@@ -14,6 +14,17 @@ export const Game = () => {
     ['Whp', 'Whp', 'Whp', 'Whp', 'Whp', 'Whp', 'Whp', 'Whp'],
     ['Whr', 'Whn', 'Whb', 'Whq', 'Whk', 'Whb', 'Whn', 'Whr'],
   ]);
+
+  const [legalMovesBoard, setLegalMovesBoard] = useState([
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+  ]);
   const [currentPiece, setCurentPiece] = useState('');
   const [firstClick, setFirstClick] = useState(true);
   const [player, setPlayer] = useState('Wh');
@@ -79,9 +90,10 @@ export const Game = () => {
       tempMoves.push(tempArray);
     }
     setLegalMoves(tempMoves);
+    setActiveLegalMoves(tempMoves, type);
   };
 
-  const getKingMoves = (coord) => {
+  const getKingMoves = (coord, type) => {
     const generateNeighbors = [
       [-1, 1],
       [-1, 0],
@@ -101,9 +113,10 @@ export const Game = () => {
     const tempMoves = generateNeighbors.reduce(reducer, []);
 
     setLegalMoves(tempMoves);
+    setActiveLegalMoves(tempMoves, type);
   };
 
-  const getKnightMoves = (coord) => {
+  const getKnightMoves = (coord, type) => {
     const generateLegalMoves = [
       [-2, 1],
       [-1, 2],
@@ -123,9 +136,10 @@ export const Game = () => {
     const tempMoves = generateLegalMoves.reduce(reducer, []);
 
     setLegalMoves(tempMoves);
+    setActiveLegalMoves(tempMoves, type);
   };
 
-  const getRookMoves = (coord) => {
+  const getRookMoves = (coord, type) => {
     const tempMoves = [];
     const generateUp = () => {
       const tempUpMoves = [];
@@ -161,6 +175,69 @@ export const Game = () => {
     generateRight();
 
     setLegalMoves(tempMoves);
+    setActiveLegalMoves(tempMoves, type);
+  };
+
+  const getBishopMoves = (coord, type) => {
+    const tempMoves = [];
+    const generateUpRight = () => {
+      const tempUpRightMoves = [];
+      let num = 0;
+      for (let i = coord[0]; i >= 0; i -= 1) {
+        tempUpRightMoves.push([i, coord[1] + num]);
+        num += 1;
+      }
+      tempMoves.push(...tempUpRightMoves);
+    };
+    const generateDownRight = () => {
+      const tempUpDownMoves = [];
+      let num = 0;
+      for (let i = coord[0]; i < 8; i += 1) {
+        tempUpDownMoves.push([i, coord[1] + num]);
+        num += 1;
+      }
+      tempMoves.push(...tempUpDownMoves);
+    };
+    const generateDownLeft = () => {
+      const tempDownLefttMoves = [];
+      let num = 0;
+      for (let i = coord[0]; i < 8; i += 1) {
+        tempDownLefttMoves.push([i, coord[1] - num]);
+        num += 1;
+      }
+      tempMoves.push(...tempDownLefttMoves);
+    };
+    const generateUpLeft = () => {
+      const tempUpLeftMoves = [];
+      let num = 0;
+      for (let i = coord[0]; i >= 0; i -= 1) {
+        tempUpLeftMoves.push([i, coord[1] - num]);
+        num += 1;
+      }
+
+      tempMoves.push(...tempUpLeftMoves);
+    };
+    generateUpRight();
+    generateDownRight();
+    generateDownLeft();
+    generateUpLeft();
+
+    setLegalMoves(tempMoves);
+    setActiveLegalMoves(tempMoves, type);
+  };
+
+  const setActiveLegalMoves = (tempMoves, type) => {
+    if (type.substring(0, 2) === player) {
+      const copyLegalMoves = [...legalMovesBoard];
+      for (let i = 0; i < tempMoves.length; i += 1) {
+        const coord = tempMoves[i];
+
+        if (coord[0] <= 7 && coord[0] >= 0 && coord[1] <= 7 && coord[1] >= 0) {
+          copyLegalMoves[coord[0]][coord[1]] = true;
+          setLegalMovesBoard(copyLegalMoves);
+        }
+      }
+    }
   };
 
   const getLegalMoves = (coord, type) => {
@@ -170,12 +247,25 @@ export const Game = () => {
       } else if (type === 'Blp') {
         getPawnMoves(coord, type);
       } else if (type === 'Whk' || type === 'Blk') {
-        getKingMoves(coord);
+        getKingMoves(coord, type);
       } else if (type === 'Whn' || type === 'Bln') {
-        getKnightMoves(coord);
+        getKnightMoves(coord, type);
       } else if (type === 'Whr' || type === 'Blr') {
-        getRookMoves(coord);
+        getRookMoves(coord, type);
+      } else if (type === 'Whb' || type === 'Blb') {
+        getBishopMoves(coord, type);
       }
+    } else {
+      setLegalMovesBoard([
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+      ]);
     }
   };
 
@@ -196,5 +286,11 @@ export const Game = () => {
     movePiece(coord, type);
   };
 
-  return <Board boardRep={boardRep} onClick={onClick} />;
+  return (
+    <Board
+      boardRep={boardRep}
+      legalMovesBoard={legalMovesBoard}
+      onClick={onClick}
+    />
+  );
 };

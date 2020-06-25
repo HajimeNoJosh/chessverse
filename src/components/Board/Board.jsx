@@ -6,7 +6,7 @@ import { Piece } from '../Piece/Piece';
 
 import './Board.scss';
 
-export const Board = ({ boardRep, onClick }) => {
+export const Board = ({ boardRep, legalMovesBoard, onClick }) => {
   const [boardArr, setBoardArr] = useState(boardRep);
 
   useEffect(() => {
@@ -21,6 +21,7 @@ export const Board = ({ boardRep, onClick }) => {
     const rows = [];
     number += i;
     for (let j = 0; j < 8; j += 1) {
+      const isActive = legalMovesBoard[j][i];
       const type = boardArr[j][i];
       const coord = [j, i];
       if (isEven(i) && isEven(j)) {
@@ -29,6 +30,7 @@ export const Board = ({ boardRep, onClick }) => {
             key={coord}
             type={type}
             coord={coord}
+            isActive={isActive}
             onClick={onClick}
             color="white"
           >
@@ -41,6 +43,7 @@ export const Board = ({ boardRep, onClick }) => {
             key={coord}
             type={type}
             coord={coord}
+            isActive={isActive}
             onClick={onClick}
             color="white"
           >
@@ -53,6 +56,7 @@ export const Board = ({ boardRep, onClick }) => {
             key={coord}
             type={type}
             coord={coord}
+            isActive={isActive}
             onClick={onClick}
             color="black"
           >
@@ -73,5 +77,6 @@ export const Board = ({ boardRep, onClick }) => {
 
 Board.propTypes = {
   boardRep: PropTypes.array,
+  legalMovesBoard: PropTypes.array,
   onClick: PropTypes.func,
 };

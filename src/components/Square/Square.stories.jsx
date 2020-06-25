@@ -1,7 +1,11 @@
 import React from 'react';
-import { withKnobs, optionsKnob as options } from '@storybook/addon-knobs';
+import {
+  withKnobs,
+  optionsKnob as options,
+  boolean,
+} from '@storybook/addon-knobs';
 import { Square } from './Square';
-import { Piece } from '../Piece/Piece';
+// import { Piece } from '../Piece/Piece';
 
 export default {
   title: 'Square',
@@ -16,9 +20,11 @@ export const Default = () => {
   };
   const color = options('Color', colorSelect, 'white', { display: 'select' });
 
+  const isActive = boolean('Active', true);
+
   return (
-    <Square color={color}>
-      <Piece type="knight" color="black" />
+    <Square color={color} isActive={isActive}>
+      {/* <Piece type="Whk" color="black" /> */}
     </Square>
   );
 };

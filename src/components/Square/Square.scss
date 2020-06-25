@@ -8,6 +8,7 @@
   text-align: center;
   vertical-align: middle;
   width: 6.2rem;
+  position: relative;
 
   &__white {
     background-color: rgb(210, 180, 140);
@@ -15,5 +16,14 @@
 
   &__black {
     background-color: rgb(139, 69, 19);
+  }
+
+  &__active::before {
+    content: '•';
+    font-size: 7rem;
+    position: absolute;
+    right: 30%;
+    bottom: 8%;
+    opacity: 60%;
   }
 }
