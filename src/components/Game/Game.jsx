@@ -226,6 +226,86 @@ export const Game = () => {
     setActiveLegalMoves(tempMoves, type);
   };
 
+  const getQueenMoves = (coord, type) => {
+    const tempMoves = [];
+    const generateUpRight = () => {
+      const tempUpRightMoves = [];
+      let num = 0;
+      for (let i = coord[0]; i >= 0; i -= 1) {
+        tempUpRightMoves.push([i, coord[1] + num]);
+        num += 1;
+      }
+      tempMoves.push(...tempUpRightMoves);
+    };
+    const generateDownRight = () => {
+      const tempUpDownMoves = [];
+      let num = 0;
+      for (let i = coord[0]; i < 8; i += 1) {
+        tempUpDownMoves.push([i, coord[1] + num]);
+        num += 1;
+      }
+      tempMoves.push(...tempUpDownMoves);
+    };
+    const generateDownLeft = () => {
+      const tempDownLefttMoves = [];
+      let num = 0;
+      for (let i = coord[0]; i < 8; i += 1) {
+        tempDownLefttMoves.push([i, coord[1] - num]);
+        num += 1;
+      }
+      tempMoves.push(...tempDownLefttMoves);
+    };
+    const generateUpLeft = () => {
+      const tempUpLeftMoves = [];
+      let num = 0;
+      for (let i = coord[0]; i >= 0; i -= 1) {
+        tempUpLeftMoves.push([i, coord[1] - num]);
+        num += 1;
+      }
+
+      tempMoves.push(...tempUpLeftMoves);
+    };
+    const generateUp = () => {
+      const tempUpMoves = [];
+      for (let i = coord[0]; i >= 0; i -= 1) {
+        tempUpMoves.push([i, coord[1]]);
+      }
+      tempMoves.push(...tempUpMoves);
+    };
+    const generateDown = () => {
+      const tempUpMoves = [];
+      for (let i = coord[0]; i < 8; i += 1) {
+        tempUpMoves.push([i, coord[1]]);
+      }
+      tempMoves.push(...tempUpMoves);
+    };
+    const generateRight = () => {
+      const tempRightMoves = [];
+      for (let i = coord[1]; i < 8; i += 1) {
+        tempRightMoves.push([coord[0], i]);
+      }
+      tempMoves.push(...tempRightMoves);
+    };
+    const generateLeft = () => {
+      const tempLeftMoves = [];
+      for (let i = coord[1]; i >= 0; i -= 1) {
+        tempLeftMoves.push([coord[0], i]);
+      }
+      tempMoves.push(...tempLeftMoves);
+    };
+    generateUp();
+    generateDown();
+    generateLeft();
+    generateRight();
+    generateUpRight();
+    generateDownRight();
+    generateDownLeft();
+    generateUpLeft();
+
+    setLegalMoves(tempMoves);
+    setActiveLegalMoves(tempMoves, type);
+  };
+
   const setActiveLegalMoves = (tempMoves, type) => {
     if (type.substring(0, 2) === player) {
       const copyLegalMoves = [...legalMovesBoard];
@@ -254,6 +334,8 @@ export const Game = () => {
         getRookMoves(coord, type);
       } else if (type === 'Whb' || type === 'Blb') {
         getBishopMoves(coord, type);
+      } else if (type === 'Whq' || type === 'Blq') {
+        getQueenMoves(coord, type);
       }
     } else {
       setLegalMovesBoard([
