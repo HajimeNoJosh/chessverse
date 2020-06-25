@@ -21,9 +21,10 @@ export const Default = () => {
   const color = options('Color', colorSelect, 'white', { display: 'select' });
 
   const isActive = boolean('Active', true);
+  const chosen = boolean('Chosen', true);
 
   return (
-    <Square color={color} isActive={isActive}>
+    <Square color={color} isActive={isActive} chosen={chosen}>
       {/* <Piece type="Whk" color="black" /> */}
     </Square>
   );

@@ -22,7 +22,7 @@ export const Board = ({ boardRep, legalMovesBoard, onClick }) => {
     number += i;
     for (let j = 0; j < 8; j += 1) {
       const isActive = legalMovesBoard[j][i];
-      const { type, color, moved } = boardArr[j][i];
+      const { type, color, moved, chosen } = boardArr[j][i];
       const coord = [j, i];
       if (isEven(i) && isEven(j)) {
         rows.push(
@@ -35,6 +35,7 @@ export const Board = ({ boardRep, legalMovesBoard, onClick }) => {
             color="white"
             pieceColor={color}
             moved={moved}
+            chosen={chosen}
           >
             <Piece color={color} type={type} />
           </Square>,
@@ -50,6 +51,7 @@ export const Board = ({ boardRep, legalMovesBoard, onClick }) => {
             color="white"
             pieceColor={color}
             moved={moved}
+            chosen={chosen}
           >
             <Piece color={color} type={type} />
           </Square>,
@@ -65,6 +67,7 @@ export const Board = ({ boardRep, legalMovesBoard, onClick }) => {
             color="black"
             pieceColor={color}
             moved={moved}
+            chosen={chosen}
           >
             <Piece color={color} type={type} />
           </Square>,

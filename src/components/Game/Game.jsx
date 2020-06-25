@@ -65,7 +65,11 @@ export const Game = () => {
     }
 
     if (firstClick) {
-      copyBoardRep[coordFirst][coordSecond] = '';
+      copyBoardRep[coordFirst][coordSecond] = {
+        chosen: true,
+        type,
+        color,
+      };
       setCurentPiece({ type, color, moved });
       setFirstCoord(coord);
     } else if (coord.toString() === firstCoord.toString()) {
@@ -76,6 +80,7 @@ export const Game = () => {
       const copyCurrentPiece = { ...currentPiece };
       copyCurrentPiece.moved = true;
       copyBoardRep[coordFirst][coordSecond] = copyCurrentPiece;
+      copyBoardRep[firstCoord[0]][firstCoord[1]] = '';
       setCurentPiece('');
       setPlayerTurn();
       setFirstCoord([]);
@@ -85,7 +90,16 @@ export const Game = () => {
     setBoardRep(copyBoardRep);
   };
 
-  const continueLoop = (coord, piece) => {
+  const continueLoop = (coord, piece, color) => {
+    if (piece === 'King') {
+      const coordFirst = coord[0];
+      const coordSecond = coord[1];
+      return (
+        boardRep[coordFirst][coordSecond] === '' ||
+        boardRep[coordFirst][coordSecond].type === piece ||
+        boardRep[coordFirst][coordSecond].color !== color
+      );
+    }
     const coordFirst = coord[0];
     const coordSecond = coord[1];
     return (
@@ -212,7 +226,9 @@ export const Game = () => {
 
     const inBoundary = tempMoves.filter((move) => filterOutOfBoundary(move));
 
-    const finalMoves = inBoundary.filter((move) => continueLoop(move, 'King'));
+    const finalMoves = inBoundary.filter((move) =>
+      continueLoop(move, 'King', color),
+    );
 
     setLegalMoves(finalMoves);
     const filteredCoord = finalMoves.filter(
@@ -572,9 +588,23 @@ export const Game = () => {
       const copyLegalMoves = [...legalMovesBoard];
       for (let i = 0; i < tempMoves.length; i += 1) {
         const coord = tempMoves[i];
-
-        if (coord[0] <= 7 && coord[0] >= 0 && coord[1] <= 7 && coord[1] >= 0) {
-          copyLegalMoves[coord[0]][coord[1]] = true;
+        if (!boardRep[coord[0]][coord[1]].type) {
+          if (
+            coord[0] <= 7 &&
+            coord[0] >= 0 &&
+            coord[1] <= 7 &&
+            coord[1] >= 0
+          ) {
+            copyLegalMoves[coord[0]][coord[1]] = 'noPiece';
+            setLegalMovesBoard(copyLegalMoves);
+          }
+        } else if (
+          coord[0] <= 7 &&
+          coord[0] >= 0 &&
+          coord[1] <= 7 &&
+          coord[1] >= 0
+        ) {
+          copyLegalMoves[coord[0]][coord[1]] = 'piece';
           setLegalMovesBoard(copyLegalMoves);
         }
       }

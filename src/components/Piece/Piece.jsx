@@ -15,6 +15,8 @@ import WhiteQueen from '../../assets/svg/whitequeen.svg';
 import BlackKing from '../../assets/svg/blackking.svg';
 import WhiteKing from '../../assets/svg/whiteking.svg';
 
+import './Piece.scss';
+
 function getPiece(type, color) {
   if (color === 'white') {
     switch (type) {
