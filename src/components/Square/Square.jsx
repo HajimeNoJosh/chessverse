@@ -4,9 +4,17 @@ import classnames from 'classnames';
 
 import './Square.scss';
 
-export const Square = ({ color, coord, type, children, onClick, isActive }) => (
+export const Square = ({
+  color,
+  coord,
+  type,
+  pieceColor,
+  children,
+  onClick,
+  isActive,
+}) => (
   <button
-    onClick={() => onClick(coord, type)}
+    onClick={() => onClick(coord, type, pieceColor)}
     className={classnames(
       'square',
       `square__${color}`,
@@ -25,6 +33,7 @@ Square.propTypes = {
   coord: PropTypes.array,
   type: PropTypes.string,
   isActive: PropTypes.bool,
+  pieceColor: PropTypes.string,
 };
 
 Square.defaultProps = {};

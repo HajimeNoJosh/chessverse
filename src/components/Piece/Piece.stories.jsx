@@ -18,20 +18,14 @@ const makeObj = (array) => {
 
 export const Default = () => {
   const typeSelect = makeObj([
-    'Whp',
-    'Whn',
-    'Whb',
-    'Whr',
-    'Whq',
-    'Whk',
-    'Blp',
-    'Bln',
-    'Blb',
-    'Blr',
-    'Blq',
-    'Blk',
+    'Pawn',
+    'King',
+    'Queen',
+    'Bishop',
+    'Knight',
+    'Rook',
   ]);
-  const type = options('Name', typeSelect, 'Whp', { display: 'select' });
+  const type = options('Name', typeSelect, 'Pawn', { display: 'select' });
   const colorSelect = {
     black: 'black',
     white: 'white',

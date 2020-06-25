@@ -2,18 +2,10 @@ import React, { useState } from 'react';
 
 import './Game.scss';
 import { Board } from '../Board/Board';
+import { boardInitialize } from './BoardInitialize';
 
 export const Game = () => {
-  const [boardRep, setBoardRep] = useState([
-    ['Blr', 'Bln', 'Blb', 'Blq', 'Blk', 'Blb', 'Bln', 'Blr'],
-    ['Blp', 'Blp', 'Blp', 'Blp', 'Blp', 'Blp', 'Blp', 'Blp'],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['Whp', 'Whp', 'Whp', 'Whp', 'Whp', 'Whp', 'Whp', 'Whp'],
-    ['Whr', 'Whn', 'Whb', 'Whq', 'Whk', 'Whb', 'Whn', 'Whr'],
-  ]);
+  const [boardRep, setBoardRep] = useState(boardInitialize());
 
   const [legalMovesBoard, setLegalMovesBoard] = useState([
     [null, null, null, null, null, null, null, null],
@@ -27,27 +19,24 @@ export const Game = () => {
   ]);
   const [currentPiece, setCurentPiece] = useState('');
   const [firstClick, setFirstClick] = useState(true);
-  const [player, setPlayer] = useState('Wh');
+  const [player, setPlayer] = useState('white');
   const [firstCoord, setFirstCoord] = useState([]);
   const [legalMoves, setLegalMoves] = useState([]);
 
   const setPlayerTurn = () => {
-    if (player === 'Wh') {
-      setPlayer('Bl');
+    if (player === 'white') {
+      setPlayer('black');
     } else {
-      setPlayer('Wh');
+      setPlayer('white');
     }
   };
 
-  const movePiece = (coord, type) => {
+  const movePiece = (coord, type, color) => {
     const coordFirst = coord[0];
     const coordSecond = coord[1];
     const copyBoardRep = [...boardRep];
 
-    if (
-      (firstClick && type === '') ||
-      (firstClick && type.substring(0, 2) !== player)
-    ) {
+    if ((firstClick && type === '') || (firstClick && color !== player)) {
       return;
     }
 
@@ -60,7 +49,7 @@ export const Game = () => {
 
     if (firstClick) {
       copyBoardRep[coordFirst][coordSecond] = '';
-      setCurentPiece(type);
+      setCurentPiece({ type, color, moved: true });
       setFirstCoord(coord);
     } else if (coord.toString() === firstCoord.toString()) {
       copyBoardRep[coordFirst][coordSecond] = currentPiece;
@@ -77,11 +66,11 @@ export const Game = () => {
     setBoardRep(copyBoardRep);
   };
 
-  const getPawnMoves = (coord, type) => {
+  const getPawnMoves = (coord, color) => {
     const tempMoves = [coord];
     for (let i = 1; i <= 2; i += 1) {
       let tempArray = null;
-      if (type === 'Whp') {
+      if (color === 'white') {
         tempArray = [coord[0] - i, coord[1]];
       } else {
         tempArray = [coord[0] + i, coord[1]];
@@ -90,10 +79,10 @@ export const Game = () => {
       tempMoves.push(tempArray);
     }
     setLegalMoves(tempMoves);
-    setActiveLegalMoves(tempMoves, type);
+    setActiveLegalMoves(tempMoves, color);
   };
 
-  const getKingMoves = (coord, type) => {
+  const getKingMoves = (coord, color) => {
     const generateNeighbors = [
       [-1, 1],
       [-1, 0],
@@ -113,10 +102,10 @@ export const Game = () => {
     const tempMoves = generateNeighbors.reduce(reducer, []);
 
     setLegalMoves(tempMoves);
-    setActiveLegalMoves(tempMoves, type);
+    setActiveLegalMoves(tempMoves, color);
   };
 
-  const getKnightMoves = (coord, type) => {
+  const getKnightMoves = (coord, color) => {
     const generateLegalMoves = [
       [-2, 1],
       [-1, 2],
@@ -136,10 +125,10 @@ export const Game = () => {
     const tempMoves = generateLegalMoves.reduce(reducer, []);
 
     setLegalMoves(tempMoves);
-    setActiveLegalMoves(tempMoves, type);
+    setActiveLegalMoves(tempMoves, color);
   };
 
-  const getRookMoves = (coord, type) => {
+  const getRookMoves = (coord, color) => {
     const tempMoves = [];
     const generateUp = () => {
       const tempUpMoves = [];
@@ -175,10 +164,10 @@ export const Game = () => {
     generateRight();
 
     setLegalMoves(tempMoves);
-    setActiveLegalMoves(tempMoves, type);
+    setActiveLegalMoves(tempMoves, color);
   };
 
-  const getBishopMoves = (coord, type) => {
+  const getBishopMoves = (coord, color) => {
     const tempMoves = [];
     const generateUpRight = () => {
       const tempUpRightMoves = [];
@@ -223,10 +212,10 @@ export const Game = () => {
     generateUpLeft();
 
     setLegalMoves(tempMoves);
-    setActiveLegalMoves(tempMoves, type);
+    setActiveLegalMoves(tempMoves, color);
   };
 
-  const getQueenMoves = (coord, type) => {
+  const getQueenMoves = (coord, color) => {
     const tempMoves = [];
     const generateUpRight = () => {
       const tempUpRightMoves = [];
@@ -303,39 +292,23 @@ export const Game = () => {
     generateUpLeft();
 
     setLegalMoves(tempMoves);
-    setActiveLegalMoves(tempMoves, type);
+    setActiveLegalMoves(tempMoves, color);
   };
 
-  const setActiveLegalMoves = (tempMoves, type) => {
-    if (type.substring(0, 2) === player) {
-      const copyLegalMoves = [...legalMovesBoard];
-      for (let i = 0; i < tempMoves.length; i += 1) {
-        const coord = tempMoves[i];
-
-        if (coord[0] <= 7 && coord[0] >= 0 && coord[1] <= 7 && coord[1] >= 0) {
-          copyLegalMoves[coord[0]][coord[1]] = true;
-          setLegalMovesBoard(copyLegalMoves);
-        }
-      }
-    }
-  };
-
-  const getLegalMoves = (coord, type) => {
+  const getLegalMoves = (coord, type, color) => {
     if (firstClick) {
-      if (type === 'Whp') {
-        getPawnMoves(coord, type);
-      } else if (type === 'Blp') {
-        getPawnMoves(coord, type);
-      } else if (type === 'Whk' || type === 'Blk') {
-        getKingMoves(coord, type);
-      } else if (type === 'Whn' || type === 'Bln') {
-        getKnightMoves(coord, type);
-      } else if (type === 'Whr' || type === 'Blr') {
-        getRookMoves(coord, type);
-      } else if (type === 'Whb' || type === 'Blb') {
-        getBishopMoves(coord, type);
-      } else if (type === 'Whq' || type === 'Blq') {
-        getQueenMoves(coord, type);
+      if (type === 'Pawn') {
+        getPawnMoves(coord, color);
+      } else if (type === 'King') {
+        getKingMoves(coord, color);
+      } else if (type === 'Knight') {
+        getKnightMoves(coord, color);
+      } else if (type === 'Rook') {
+        getRookMoves(coord, color);
+      } else if (type === 'Bishop') {
+        getBishopMoves(coord, color);
+      } else if (type === 'Queen') {
+        getQueenMoves(coord, color);
       }
     } else {
       setLegalMovesBoard([
@@ -351,6 +324,20 @@ export const Game = () => {
     }
   };
 
+  const setActiveLegalMoves = (tempMoves, color) => {
+    if (color === player) {
+      const copyLegalMoves = [...legalMovesBoard];
+      for (let i = 0; i < tempMoves.length; i += 1) {
+        const coord = tempMoves[i];
+
+        if (coord[0] <= 7 && coord[0] >= 0 && coord[1] <= 7 && coord[1] >= 0) {
+          copyLegalMoves[coord[0]][coord[1]] = true;
+          setLegalMovesBoard(copyLegalMoves);
+        }
+      }
+    }
+  };
+
   const checkLegalMove = (coord) => {
     let moveIsLegal = false;
     if (!firstClick) {
@@ -363,9 +350,9 @@ export const Game = () => {
     return moveIsLegal;
   };
 
-  const onClick = (coord, type) => {
-    getLegalMoves(coord, type);
-    movePiece(coord, type);
+  const onClick = (coord, type, color) => {
+    getLegalMoves(coord, type, color);
+    movePiece(coord, type, color);
   };
 
   return (

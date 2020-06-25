@@ -15,57 +15,59 @@ import WhiteQueen from '../../assets/svg/whitequeen.svg';
 import BlackKing from '../../assets/svg/blackking.svg';
 import WhiteKing from '../../assets/svg/whiteking.svg';
 
-function getPiece(type) {
-  switch (type) {
-    case 'Whp':
-      return <WhitePawn />;
-    case 'Whn':
-      return <WhiteKnight />;
-    case 'Whb':
-      return <WhiteBishop />;
-    case 'Whr':
-      return <WhiteRook />;
-    case 'Whq':
-      return <WhiteQueen />;
-    case 'Whk':
-      return <WhiteKing />;
-    case 'Blp':
-      return <BlackPawn />;
-    case 'Bln':
-      return <BlackKnight />;
-    case 'Blb':
-      return <BlackBishop />;
-    case 'Blr':
-      return <BlackRook />;
-    case 'Blq':
-      return <BlackQueen />;
-    case 'Blk':
-      return <BlackKing />;
-    default:
-      return null;
+function getPiece(type, color) {
+  if (color === 'white') {
+    switch (type) {
+      case 'Pawn':
+        return <WhitePawn />;
+      case 'Knight':
+        return <WhiteKnight />;
+      case 'Bishop':
+        return <WhiteBishop />;
+      case 'Rook':
+        return <WhiteRook />;
+      case 'Queen':
+        return <WhiteQueen />;
+      case 'King':
+        return <WhiteKing />;
+      default:
+        return null;
+    }
+  } else {
+    switch (type) {
+      case 'Pawn':
+        return <BlackPawn />;
+      case 'Knight':
+        return <BlackKnight />;
+      case 'Bishop':
+        return <BlackBishop />;
+      case 'Rook':
+        return <BlackRook />;
+      case 'Queen':
+        return <BlackQueen />;
+      case 'King':
+        return <BlackKing />;
+      default:
+        return null;
+    }
   }
 }
 
-export const Piece = ({ type }) => (
-  <span className={classnames('piece')}>{getPiece(type)}</span>
+export const Piece = ({ type, color }) => (
+  <span className={classnames('piece')}>{getPiece(type, color)}</span>
 );
 
 Piece.propTypes = {
   type: PropTypes.oneOf([
-    'Whp',
-    'Whn',
-    'Whb',
-    'Whr',
-    'Whq',
-    'Whk',
-    'Blp',
-    'Bln',
-    'Blb',
-    'Blr',
-    'Blq',
-    'Blk',
+    'Pawn',
+    'Knight',
+    'Bishop',
+    'Rook',
+    'Queen',
+    'King',
     '',
   ]),
+  color: PropTypes.oneOf(['white', 'black']),
 };
 
 Piece.defaultProps = {};
