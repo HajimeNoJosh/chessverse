@@ -88,7 +88,7 @@ export const Game = () => {
     const tempMoves = [coord];
     if (moved) {
       for (let i = 1; i < 2; i += 1) {
-        let tempArray = null;
+        let tempArray = [];
         if (color === 'white') {
           const checkCoord = [coord[0] - i, coord[1]];
           if (continueLoop(checkCoord)) {
@@ -104,7 +104,7 @@ export const Game = () => {
       }
     } else {
       for (let i = 1; i <= 2; i += 1) {
-        let tempArray = null;
+        let tempArray = [];
         if (color === 'white') {
           const checkCoord = [coord[0] - i, coord[1]];
           if (continueLoop(checkCoord)) {
