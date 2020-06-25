@@ -31,7 +31,7 @@ export const Game = () => {
     }
   };
 
-  const movePiece = (coord, type, color) => {
+  const movePiece = (coord, type, color, moved) => {
     const coordFirst = coord[0];
     const coordSecond = coord[1];
     const copyBoardRep = [...boardRep];
@@ -45,18 +45,30 @@ export const Game = () => {
         return;
       }
       setLegalMoves([]);
+      setLegalMovesBoard([
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+      ]);
     }
 
     if (firstClick) {
       copyBoardRep[coordFirst][coordSecond] = '';
-      setCurentPiece({ type, color, moved: true });
+      setCurentPiece({ type, color, moved });
       setFirstCoord(coord);
     } else if (coord.toString() === firstCoord.toString()) {
       copyBoardRep[coordFirst][coordSecond] = currentPiece;
       setCurentPiece('');
       setFirstCoord([]);
     } else {
-      copyBoardRep[coordFirst][coordSecond] = currentPiece;
+      const copyCurrentPiece = { ...currentPiece };
+      copyCurrentPiece.moved = true;
+      copyBoardRep[coordFirst][coordSecond] = copyCurrentPiece;
       setCurentPiece('');
       setPlayerTurn();
       setFirstCoord([]);
@@ -66,20 +78,35 @@ export const Game = () => {
     setBoardRep(copyBoardRep);
   };
 
-  const getPawnMoves = (coord, color) => {
+  const getPawnMoves = (coord, color, moved) => {
     const tempMoves = [coord];
-    for (let i = 1; i <= 2; i += 1) {
-      let tempArray = null;
-      if (color === 'white') {
-        tempArray = [coord[0] - i, coord[1]];
-      } else {
-        tempArray = [coord[0] + i, coord[1]];
+    if (moved) {
+      for (let i = 1; i < 2; i += 1) {
+        let tempArray = null;
+        if (color === 'white') {
+          tempArray = [coord[0] - i, coord[1]];
+        } else {
+          tempArray = [coord[0] + i, coord[1]];
+        }
+        tempMoves.push(tempArray);
       }
-
-      tempMoves.push(tempArray);
+    } else {
+      for (let i = 1; i <= 2; i += 1) {
+        let tempArray = null;
+        if (color === 'white') {
+          tempArray = [coord[0] - i, coord[1]];
+        } else {
+          tempArray = [coord[0] + i, coord[1]];
+        }
+        tempMoves.push(tempArray);
+      }
     }
+
     setLegalMoves(tempMoves);
-    setActiveLegalMoves(tempMoves, color);
+    const filterdMoves = tempMoves.filter(
+      (move) => move.toString() !== coord.toString(),
+    );
+    setActiveLegalMoves(filterdMoves, color);
   };
 
   const getKingMoves = (coord, color) => {
@@ -295,10 +322,10 @@ export const Game = () => {
     setActiveLegalMoves(tempMoves, color);
   };
 
-  const getLegalMoves = (coord, type, color) => {
+  const getLegalMoves = (coord, type, color, moved) => {
     if (firstClick) {
       if (type === 'Pawn') {
-        getPawnMoves(coord, color);
+        getPawnMoves(coord, color, moved);
       } else if (type === 'King') {
         getKingMoves(coord, color);
       } else if (type === 'Knight') {
@@ -310,17 +337,6 @@ export const Game = () => {
       } else if (type === 'Queen') {
         getQueenMoves(coord, color);
       }
-    } else {
-      setLegalMovesBoard([
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, null],
-      ]);
     }
   };
 
@@ -350,9 +366,9 @@ export const Game = () => {
     return moveIsLegal;
   };
 
-  const onClick = (coord, type, color) => {
-    getLegalMoves(coord, type, color);
-    movePiece(coord, type, color);
+  const onClick = (coord, type, color, moved) => {
+    getLegalMoves(coord, type, color, moved);
+    movePiece(coord, type, color, moved);
   };
 
   return (

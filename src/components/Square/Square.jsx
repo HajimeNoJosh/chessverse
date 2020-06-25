@@ -12,9 +12,10 @@ export const Square = ({
   children,
   onClick,
   isActive,
+  moved,
 }) => (
   <button
-    onClick={() => onClick(coord, type, pieceColor)}
+    onClick={() => onClick(coord, type, pieceColor, moved)}
     className={classnames(
       'square',
       `square__${color}`,
@@ -34,6 +35,7 @@ Square.propTypes = {
   type: PropTypes.string,
   isActive: PropTypes.bool,
   pieceColor: PropTypes.string,
+  moved: PropTypes.bool,
 };
 
 Square.defaultProps = {};
