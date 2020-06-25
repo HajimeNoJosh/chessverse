@@ -78,15 +78,27 @@ export const Game = () => {
     setBoardRep(copyBoardRep);
   };
 
+  const continueLoop = (coord) => {
+    const coordFirst = coord[0];
+    const coordSecond = coord[1];
+    return boardRep[coordFirst][coordSecond] === '';
+  };
+
   const getPawnMoves = (coord, color, moved) => {
     const tempMoves = [coord];
     if (moved) {
       for (let i = 1; i < 2; i += 1) {
         let tempArray = null;
         if (color === 'white') {
-          tempArray = [coord[0] - i, coord[1]];
+          const checkCoord = [coord[0] - i, coord[1]];
+          if (continueLoop(checkCoord)) {
+            tempArray = [coord[0] - i, coord[1]];
+          }
         } else {
-          tempArray = [coord[0] + i, coord[1]];
+          const checkCoord = [coord[0] + i, coord[1]];
+          if (continueLoop(checkCoord)) {
+            tempArray = [coord[0] + i, coord[1]];
+          }
         }
         tempMoves.push(tempArray);
       }
@@ -94,19 +106,29 @@ export const Game = () => {
       for (let i = 1; i <= 2; i += 1) {
         let tempArray = null;
         if (color === 'white') {
-          tempArray = [coord[0] - i, coord[1]];
+          const checkCoord = [coord[0] - i, coord[1]];
+          if (continueLoop(checkCoord)) {
+            tempArray = [coord[0] - i, coord[1]];
+          }
         } else {
-          tempArray = [coord[0] + i, coord[1]];
+          const checkCoord = [coord[0] + i, coord[1]];
+          if (continueLoop(checkCoord)) {
+            tempArray = [coord[0] + i, coord[1]];
+          }
         }
         tempMoves.push(tempArray);
       }
     }
 
     setLegalMoves(tempMoves);
-    const filterdMoves = tempMoves.filter(
-      (move) => move.toString() !== coord.toString(),
-    );
-    setActiveLegalMoves(filterdMoves, color);
+    if (tempMoves.length > 0) {
+      const filterdMoves = tempMoves.filter(
+        (move) => move.toString() !== coord.toString(),
+      );
+      setActiveLegalMoves(filterdMoves, color);
+    } else {
+      setActiveLegalMoves(tempMoves, color);
+    }
   };
 
   const getKingMoves = (coord, color) => {
