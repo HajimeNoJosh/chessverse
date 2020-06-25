@@ -49,6 +49,28 @@ export const Game = () => {
 
     if (!firstClick) {
       if (!checkLegalMove(coord)) {
+        copyBoardRep[firstCoord[0]][firstCoord[1]] = {
+          chosen: false,
+          type: currentPiece.type,
+          color: currentPiece.color,
+          moved: currentPiece.moved,
+        };
+        setBoardRep(copyBoardRep);
+        setCurentPiece('');
+        setFirstCoord([]);
+        setLegalMoves([]);
+        setLegalMovesBoard([
+          [null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null],
+        ]);
+        setFirstClick(true);
+        setPlayer(currentPiece.color);
         return;
       }
       setLegalMoves([]);
@@ -113,45 +135,6 @@ export const Game = () => {
 
   const getPawnMoves = (coord, color, moved) => {
     const tempMoves = [coord];
-    if (moved) {
-      for (let i = 1; i < 2; i += 1) {
-        let tempArray = [];
-        if (color === 'white') {
-          const checkCoord = [coord[0] - i, coord[1]];
-          if (continueLoop(checkCoord)) {
-            tempArray = [coord[0] - i, coord[1]];
-          }
-        } else {
-          const checkCoord = [coord[0] + i, coord[1]];
-          if (continueLoop(checkCoord)) {
-            tempArray = [coord[0] + i, coord[1]];
-          }
-        }
-        tempMoves.push(tempArray);
-      }
-    } else {
-      for (let i = 1; i <= 2; i += 1) {
-        let tempArray = [];
-        if (color === 'white') {
-          const checkCoord = [coord[0] - i, coord[1]];
-          if (boardRep[checkCoord[0]][checkCoord[1]] !== '') {
-            break;
-          }
-          if (continueLoop(checkCoord)) {
-            tempArray = [coord[0] - i, coord[1]];
-          }
-        } else {
-          const checkCoord = [coord[0] + i, coord[1]];
-          if (boardRep[checkCoord[0]][checkCoord[1]] !== '') {
-            break;
-          }
-          if (continueLoop(checkCoord)) {
-            tempArray = [coord[0] + i, coord[1]];
-          }
-        }
-        tempMoves.push(tempArray);
-      }
-    }
     // For taking with pawns
     if (color === 'white') {
       const generateNeighbors = [
@@ -194,15 +177,55 @@ export const Game = () => {
         }
       });
     }
+    if (moved) {
+      for (let i = 1; i < 2; i += 1) {
+        let tempArray = [];
+        if (color === 'white') {
+          const checkCoord = [coord[0] - i, coord[1]];
+          if (continueLoop(checkCoord)) {
+            tempArray = [coord[0] - i, coord[1]];
+          }
+        } else {
+          const checkCoord = [coord[0] + i, coord[1]];
+          if (continueLoop(checkCoord)) {
+            tempArray = [coord[0] + i, coord[1]];
+          }
+        }
+        tempMoves.push(tempArray);
+      }
+    } else {
+      for (let i = 1; i <= 2; i += 1) {
+        let tempArray = [];
+        if (color === 'white') {
+          const checkCoord = [coord[0] - i, coord[1]];
+          if (boardRep[checkCoord[0]][checkCoord[1]] !== '') {
+            break;
+          }
+          if (continueLoop(checkCoord)) {
+            tempArray = [coord[0] - i, coord[1]];
+          }
+        } else {
+          const checkCoord = [coord[0] + i, coord[1]];
+          if (boardRep[checkCoord[0]][checkCoord[1]] !== '') {
+            break;
+          }
+          if (continueLoop(checkCoord)) {
+            tempArray = [coord[0] + i, coord[1]];
+          }
+        }
+        tempMoves.push(tempArray);
+      }
+    }
+    const filterOutEmptyArray = tempMoves.filter((move) => move.length !== 0);
 
-    setLegalMoves(tempMoves);
-    if (tempMoves.length > 0) {
-      const filterdMoves = tempMoves.filter(
+    setLegalMoves(filterOutEmptyArray);
+    if (filterOutEmptyArray.length > 0) {
+      const filterdMoves = filterOutEmptyArray.filter(
         (move) => move.toString() !== coord.toString(),
       );
       setActiveLegalMoves(filterdMoves, color);
     } else {
-      setActiveLegalMoves(tempMoves, color);
+      setActiveLegalMoves(filterOutEmptyArray, color);
     }
   };
 
