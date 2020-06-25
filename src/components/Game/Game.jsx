@@ -140,44 +140,45 @@ export const Game = () => {
     }
     // For taking with pawns
     if (color === 'white') {
-      const coordUp = coord[0] - 1;
-      const coordRight = coord[1] + 1;
-      const coordLeft = coord[1] - 1;
+      const generateNeighbors = [
+        [-1, -1],
+        [-1, 1],
+      ];
 
-      if (
-        coordUp < 8 &&
-        coordUp >= 0 &&
-        coordRight < 8 &&
-        coordRight >= 0 &&
-        coordLeft < 8 &&
-        coordLeft >= 0
-      ) {
-        if (boardRep[coordUp][coordRight].color === 'black') {
-          tempMoves.push([coordUp, coordRight]);
+      const reducer = (acc, curr) => [
+        ...acc,
+        [coord[0] + curr[0], coord[1] + curr[1]],
+      ];
+      const tempPawnCaptures = generateNeighbors.reduce(reducer, []);
+      const inBoundary = tempPawnCaptures.filter((move) =>
+        filterOutOfBoundary(move),
+      );
+
+      inBoundary.forEach((element) => {
+        if (boardRep[element[0]][element[1]].color === 'black') {
+          tempMoves.push([element[0], element[1]]);
         }
-        if (boardRep[coordUp][coordLeft].color === 'black') {
-          tempMoves.push([coordUp, coordLeft]);
-        }
-      }
+      });
     } else if (color === 'black') {
-      const coordDown = coord[0] + 1;
-      const coordRight = coord[1] + 1;
-      const coordLeft = coord[1] - 1;
-      if (
-        coordDown < 8 &&
-        coordDown >= 0 &&
-        coordRight < 8 &&
-        coordRight >= 0 &&
-        coordLeft < 8 &&
-        coordLeft >= 0
-      ) {
-        if (boardRep[coordDown][coordRight].color === 'white') {
-          tempMoves.push([coordDown, coordRight]);
+      const generateNeighbors = [
+        [1, -1],
+        [1, 1],
+      ];
+
+      const reducer = (acc, curr) => [
+        ...acc,
+        [coord[0] + curr[0], coord[1] + curr[1]],
+      ];
+      const tempPawnCaptures = generateNeighbors.reduce(reducer, []);
+      const inBoundary = tempPawnCaptures.filter((move) =>
+        filterOutOfBoundary(move),
+      );
+
+      inBoundary.forEach((element) => {
+        if (boardRep[element[0]][element[1]].color === 'white') {
+          tempMoves.push([element[0], element[1]]);
         }
-        if (boardRep[coordDown][coordLeft].color === 'white') {
-          tempMoves.push([coordDown, coordLeft]);
-        }
-      }
+      });
     }
 
     setLegalMoves(tempMoves);
