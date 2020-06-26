@@ -38,6 +38,7 @@ export const Game = () => {
     return 'white';
   };
 
+  // Should use reducer helper to change state around as much as I do in this function
   const movePiece = (coord, type, color, moved) => {
     const coordFirst = coord[0];
     const coordSecond = coord[1];
@@ -112,6 +113,8 @@ export const Game = () => {
     setBoardRep(copyBoardRep);
   };
 
+  // This should not have to exist, there are other ways of doing this
+
   const continueLoop = (coord, piece, color) => {
     if (piece === 'King') {
       const coordFirst = coord[0];
@@ -132,6 +135,8 @@ export const Game = () => {
 
   const filterOutOfBoundary = (coord) =>
     coord[0] <= 7 && coord[0] >= 0 && coord[1] <= 7 && coord[1] >= 0;
+
+  // Pawn really needs a refactor
 
   const getPawnMoves = (coord, color, moved) => {
     const tempMoves = [coord];
@@ -177,6 +182,7 @@ export const Game = () => {
         }
       });
     }
+
     if (moved) {
       for (let i = 1; i < 2; i += 1) {
         let tempArray = [];
@@ -216,9 +222,9 @@ export const Game = () => {
         tempMoves.push(tempArray);
       }
     }
+
     const filterOutEmptyArray = tempMoves.filter((move) => move.length !== 0);
 
-    setLegalMoves(filterOutEmptyArray);
     if (filterOutEmptyArray.length > 0) {
       const filterdMoves = filterOutEmptyArray.filter(
         (move) => move.toString() !== coord.toString(),
@@ -227,6 +233,7 @@ export const Game = () => {
     } else {
       setActiveLegalMoves(filterOutEmptyArray, color);
     }
+    return filterOutEmptyArray;
   };
 
   const getKingMoves = (coord, color) => {
@@ -253,11 +260,11 @@ export const Game = () => {
       continueLoop(move, 'King', color),
     );
 
-    setLegalMoves(finalMoves);
     const filteredCoord = finalMoves.filter(
       (move) => coord.toString() !== move.toString(),
     );
     setActiveLegalMoves(filteredCoord, color);
+    return finalMoves;
   };
 
   const getKnightMoves = (coord, color) => {
@@ -287,11 +294,11 @@ export const Game = () => {
 
     finalLegalMoves.push(coord);
 
-    setLegalMoves(finalLegalMoves);
     const filteredCoord = finalLegalMoves.filter(
       (move) => coord.toString() !== move.toString(),
     );
     setActiveLegalMoves(filteredCoord, color);
+    return finalLegalMoves;
   };
 
   const getRookMoves = (coord, color) => {
@@ -353,11 +360,11 @@ export const Game = () => {
     generateLeft();
     generateRight();
 
-    setLegalMoves(tempMoves);
     const filteredCoord = tempMoves.filter(
       (move) => coord.toString() !== move.toString(),
     );
     setActiveLegalMoves(filteredCoord, color);
+    return tempMoves;
   };
 
   const getBishopMoves = (coord, color) => {
@@ -439,11 +446,11 @@ export const Game = () => {
     generateDownLeft();
     generateUpLeft();
 
-    setLegalMoves(tempMoves);
     const filteredCoord = tempMoves.filter(
       (move) => coord.toString() !== move.toString(),
     );
     setActiveLegalMoves(filteredCoord, color);
+    return tempMoves;
   };
 
   const getQueenMoves = (coord, color) => {
@@ -581,30 +588,32 @@ export const Game = () => {
     generateDownLeft();
     generateUpLeft();
 
-    setLegalMoves(tempMoves);
     const filteredCoord = tempMoves.filter(
       (move) => coord.toString() !== move.toString(),
     );
     setActiveLegalMoves(filteredCoord, color);
+    return tempMoves;
   };
 
-  const getLegalMoves = (coord, type, color, moved) => {
+  const settingLegalMoves = (coord, type, color, moved) => {
     if (firstClick) {
       if (type === 'Pawn') {
-        getPawnMoves(coord, color, moved);
+        setLegalMoves(getPawnMoves(coord, color, moved));
       } else if (type === 'King') {
-        getKingMoves(coord, color);
+        setLegalMoves(getKingMoves(coord, color));
       } else if (type === 'Knight') {
-        getKnightMoves(coord, color);
+        setLegalMoves(getKnightMoves(coord, color));
       } else if (type === 'Rook') {
-        getRookMoves(coord, color);
+        setLegalMoves(getRookMoves(coord, color));
       } else if (type === 'Bishop') {
-        getBishopMoves(coord, color);
+        setLegalMoves(getBishopMoves(coord, color));
       } else if (type === 'Queen') {
-        getQueenMoves(coord, color);
+        setLegalMoves(getQueenMoves(coord, color));
       }
     }
   };
+
+  // Active meaning the squares that the piece can move too are shown to the user
 
   const setActiveLegalMoves = (tempMoves, color) => {
     if (color === player) {
@@ -647,7 +656,7 @@ export const Game = () => {
   };
 
   const onClick = (coord, type, color, moved) => {
-    getLegalMoves(coord, type, color, moved);
+    settingLegalMoves(coord, type, color, moved);
     movePiece(coord, type, color, moved);
   };
 
