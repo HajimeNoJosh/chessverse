@@ -56,7 +56,9 @@ function getPiece(type, color) {
 }
 
 export const Piece = ({ type, color }) => (
-  <span className={classnames('piece')}>{getPiece(type, color)}</span>
+  <span aria-label={`${color} ${type}`} className={classnames('piece')}>
+    {getPiece(type, color)}
+  </span>
 );
 
 Piece.propTypes = {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import { Square } from '../Square/Square';
@@ -7,12 +7,6 @@ import { Piece } from '../Piece/Piece';
 import './Board.scss';
 
 export const Board = ({ boardRep, legalMovesBoard, onClick }) => {
-  const [boardArr, setBoardArr] = useState(boardRep);
-
-  useEffect(() => {
-    setBoardArr(boardRep);
-  }, [boardRep]);
-
   const board = [];
   const isEven = (num) => num % 2 === 0;
   let number = 0;
@@ -21,8 +15,8 @@ export const Board = ({ boardRep, legalMovesBoard, onClick }) => {
     const rows = [];
     number += i;
     for (let j = 0; j < 8; j += 1) {
-      const isActive = legalMovesBoard[j][i];
-      const { type, color, moved, chosen } = boardArr[j][i];
+      const isAttacked = legalMovesBoard[j][i];
+      const { type, color, moved, isActive } = boardRep[j][i];
       const coord = [j, i];
       if (isEven(i) && isEven(j)) {
         rows.push(
@@ -30,12 +24,12 @@ export const Board = ({ boardRep, legalMovesBoard, onClick }) => {
             key={coord}
             type={type}
             coord={coord}
-            isActive={isActive}
+            isAttacked={isAttacked}
             onClick={onClick}
             color="white"
             pieceColor={color}
             moved={moved}
-            chosen={chosen}
+            isActive={isActive}
           >
             <Piece color={color} type={type} />
           </Square>,
@@ -46,12 +40,12 @@ export const Board = ({ boardRep, legalMovesBoard, onClick }) => {
             key={coord}
             type={type}
             coord={coord}
-            isActive={isActive}
+            isAttacked={isAttacked}
             onClick={onClick}
             color="white"
             pieceColor={color}
             moved={moved}
-            chosen={chosen}
+            isActive={isActive}
           >
             <Piece color={color} type={type} />
           </Square>,
@@ -62,12 +56,12 @@ export const Board = ({ boardRep, legalMovesBoard, onClick }) => {
             key={coord}
             type={type}
             coord={coord}
-            isActive={isActive}
+            isAttacked={isAttacked}
             onClick={onClick}
             color="black"
             pieceColor={color}
             moved={moved}
-            chosen={chosen}
+            isActive={isActive}
           >
             <Piece color={color} type={type} />
           </Square>,

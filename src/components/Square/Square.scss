@@ -17,7 +17,8 @@
   &__black {
     background-color: rgb(139, 69, 19);
   }
-  &__active--noPiece::before {
+
+  &__atacked--noPiece::before {
     bottom: 8%;
     color: rgba(20, 30, 85, 0.6);
     content: '•';
@@ -25,7 +26,8 @@
     position: absolute;
     right: 30%;
   }
-  &__active--piece::before {
+
+  &__atacked--piece::before {
     border-bottom: 20px solid transparent;
     border-left: 20px solid transparent;
     border-right: 20px solid rgba(255, 0, 21, 0.6);
@@ -38,7 +40,7 @@
     z-index: 2;
   }
 
-  &__chosen::after {
+  &__isActive::after {
     background-color: rgba(20, 85, 30, 0.5);
     bottom: 0%;
     content: '';

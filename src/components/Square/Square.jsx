@@ -11,29 +11,23 @@ export const Square = ({
   pieceColor,
   children,
   onClick,
-  isActive,
+  isAttacked,
   moved,
-  chosen,
-}) => {
-  let squareFlair;
-  if (isActive) {
-    squareFlair = isActive;
-  }
-  return (
-    <button
-      onClick={() => onClick(coord, type, pieceColor, moved)}
-      className={classnames(
-        'square',
-        `square__${color}`,
-        isActive && `square__active--${squareFlair}`,
-        chosen && `square__chosen`,
-      )}
-      type="button"
-    >
-      {children}
-    </button>
-  );
-};
+  isActive,
+}) => (
+  <button
+    onClick={() => onClick(coord, type, pieceColor, moved)}
+    className={classnames(
+      'square',
+      `square__${color}`,
+      isAttacked && `square__atacked--${isAttacked}`,
+      isActive && `square__isActive`,
+    )}
+    type="button"
+  >
+    {children}
+  </button>
+);
 
 Square.propTypes = {
   color: PropTypes.oneOf(['white', 'black']),
@@ -41,10 +35,10 @@ Square.propTypes = {
   onClick: PropTypes.func,
   coord: PropTypes.array,
   type: PropTypes.string,
-  isActive: PropTypes.string,
+  isAttacked: PropTypes.string,
   pieceColor: PropTypes.string,
   moved: PropTypes.bool,
-  chosen: PropTypes.bool,
+  isActive: PropTypes.bool,
 };
 
 Square.defaultProps = {};

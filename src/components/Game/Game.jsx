@@ -1,33 +1,140 @@
-import React, { useState } from 'react';
+import React, { useReducer } from 'react';
 
+import { AppStates } from '../../app/states';
 import './Game.scss';
 import { Board } from '../Board/Board';
 import { boardInitialize } from './BoardInitialize';
 
-export const Game = () => {
-  const [boardRep, setBoardRep] = useState(boardInitialize());
+const initialState = {
+  boardRep: boardInitialize(),
+  legalMovesBoard: [
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+  ],
+  appState: AppStates.Initial,
+  currentPiece: '',
+  firstClick: true,
+  player: 'white',
+  firstCoord: [],
+  legalMoves: [],
+};
 
-  const [legalMovesBoard, setLegalMovesBoard] = useState([
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-  ]);
-  const [currentPiece, setCurentPiece] = useState('');
-  const [firstClick, setFirstClick] = useState(true);
-  const [player, setPlayer] = useState('white');
-  const [firstCoord, setFirstCoord] = useState([]);
-  const [legalMoves, setLegalMoves] = useState([]);
+function reducer(state, action) {
+  switch (action.type) {
+    case 'setPlayerBlack':
+      return {
+        ...state,
+        player: 'black',
+      };
+    case 'setPlayerWhite':
+      return {
+        ...state,
+        player: 'white',
+      };
+    case 'illegalMove':
+      return {
+        ...state,
+        boardRep: action.copyBoardRep,
+        player: state.currentPiece.color,
+        curentPiece: '',
+        firstCoord: [],
+        legalMoves: [],
+        legalMovesBoard: [
+          [null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null],
+        ],
+        firstClick: true,
+      };
+    case 'clearLegalMoves':
+      return {
+        ...state,
+        legalMoves: [],
+        legalMovesBoard: [
+          [null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null, null],
+        ],
+      };
+    case 'firstClick':
+      return {
+        ...state,
+        currentPiece: {
+          type: action.pieceClicked.type,
+          color: action.pieceClicked.color,
+          moved: action.pieceClicked.moved,
+        },
+        firstCoord: action.pieceClicked.coord,
+        appState: AppStates.Play,
+      };
+    case 'sameSquare':
+      return {
+        ...state,
+        currentPiece: '',
+        firstCoord: [],
+      };
+    case 'secondClick':
+      return {
+        ...state,
+        currentPiece: '',
+        firstCoord: [],
+      };
+    case 'endClick':
+      return {
+        ...state,
+        firstClick: !state.firstClick,
+        boardRep: action.copyBoardRep,
+      };
+    case 'movesForPieces':
+      return {
+        ...state,
+        legalMoves: action.moves,
+      };
+    case 'legalMovesBoard':
+      return {
+        ...state,
+        legalMovesBoard: action.copyLegalMoves,
+      };
+
+    default:
+      throw new Error();
+  }
+}
+
+export const Game = () => {
+  const [state, dispatch] = useReducer(reducer, { ...initialState });
+
+  const {
+    boardRep,
+    legalMovesBoard,
+    currentPiece,
+    firstClick,
+    player,
+    firstCoord,
+    legalMoves,
+  } = state;
 
   const setPlayerTurn = () => {
     if (player === 'white') {
-      setPlayer('black');
+      dispatch({ type: 'setPlayerBlack' });
     } else {
-      setPlayer('white');
+      dispatch({ type: 'setPlayerWhite' });
     }
   };
   // This helper function is for finding the opposite color of the current player
@@ -51,66 +158,38 @@ export const Game = () => {
     if (!firstClick) {
       if (!checkLegalMove(coord)) {
         copyBoardRep[firstCoord[0]][firstCoord[1]] = {
-          chosen: false,
+          isActive: false,
           type: currentPiece.type,
           color: currentPiece.color,
           moved: currentPiece.moved,
         };
-        setBoardRep(copyBoardRep);
-        setCurentPiece('');
-        setFirstCoord([]);
-        setLegalMoves([]);
-        setLegalMovesBoard([
-          [null, null, null, null, null, null, null, null],
-          [null, null, null, null, null, null, null, null],
-          [null, null, null, null, null, null, null, null],
-          [null, null, null, null, null, null, null, null],
-          [null, null, null, null, null, null, null, null],
-          [null, null, null, null, null, null, null, null],
-          [null, null, null, null, null, null, null, null],
-          [null, null, null, null, null, null, null, null],
-        ]);
-        setFirstClick(true);
-        setPlayer(currentPiece.color);
+        dispatch({ type: 'illegalMove', copyBoardRep });
         return;
       }
-      setLegalMoves([]);
-      setLegalMovesBoard([
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, null],
-      ]);
+      dispatch({ type: 'clearLegalMoves' });
     }
 
     if (firstClick) {
       copyBoardRep[coordFirst][coordSecond] = {
-        chosen: true,
+        isActive: true,
         type,
         color,
       };
-      setCurentPiece({ type, color, moved });
-      setFirstCoord(coord);
+      const pieceClicked = { type, color, moved, coord };
+      dispatch({ type: 'firstClick', pieceClicked });
     } else if (coord.toString() === firstCoord.toString()) {
       copyBoardRep[coordFirst][coordSecond] = currentPiece;
-      setCurentPiece('');
-      setFirstCoord([]);
+      dispatch({ type: 'sameSquare' });
     } else {
       const copyCurrentPiece = { ...currentPiece };
       copyCurrentPiece.moved = true;
       copyBoardRep[coordFirst][coordSecond] = copyCurrentPiece;
       copyBoardRep[firstCoord[0]][firstCoord[1]] = '';
-      setCurentPiece('');
+      dispatch({ type: 'secondClick' });
       setPlayerTurn();
-      setFirstCoord([]);
     }
 
-    setFirstClick(!firstClick);
-    setBoardRep(copyBoardRep);
+    dispatch({ type: 'endClick', copyBoardRep });
   };
 
   // This should not have to exist, there are other ways of doing this
@@ -147,11 +226,11 @@ export const Game = () => {
         [-1, 1],
       ];
 
-      const reducer = (acc, curr) => [
+      const pieceReducer = (acc, curr) => [
         ...acc,
         [coord[0] + curr[0], coord[1] + curr[1]],
       ];
-      const tempPawnCaptures = generateNeighbors.reduce(reducer, []);
+      const tempPawnCaptures = generateNeighbors.reduce(pieceReducer, []);
       const inBoundary = tempPawnCaptures.filter((move) =>
         filterOutOfBoundary(move),
       );
@@ -167,11 +246,11 @@ export const Game = () => {
         [1, 1],
       ];
 
-      const reducer = (acc, curr) => [
+      const pieceReducer = (acc, curr) => [
         ...acc,
         [coord[0] + curr[0], coord[1] + curr[1]],
       ];
-      const tempPawnCaptures = generateNeighbors.reduce(reducer, []);
+      const tempPawnCaptures = generateNeighbors.reduce(pieceReducer, []);
       const inBoundary = tempPawnCaptures.filter((move) =>
         filterOutOfBoundary(move),
       );
@@ -248,11 +327,11 @@ export const Game = () => {
       [1, 0],
       [1, -1],
     ];
-    const reducer = (acc, curr) => [
+    const pieceReducer = (acc, curr) => [
       ...acc,
       [coord[0] + curr[0], coord[1] + curr[1]],
     ];
-    const tempMoves = generateNeighbors.reduce(reducer, []);
+    const tempMoves = generateNeighbors.reduce(pieceReducer, []);
 
     const inBoundary = tempMoves.filter((move) => filterOutOfBoundary(move));
 
@@ -279,12 +358,12 @@ export const Game = () => {
       [1, -2],
       [2, -1],
     ];
-    const reducer = (acc, curr) => [
+    const pieceReducer = (acc, curr) => [
       ...acc,
       [coord[0] + curr[0], coord[1] + curr[1]],
     ];
 
-    const tempMoves = generateLegalMoves.reduce(reducer, []);
+    const tempMoves = generateLegalMoves.reduce(pieceReducer, []);
 
     const inBoundary = tempMoves.filter((move) => filterOutOfBoundary(move));
 
@@ -598,17 +677,23 @@ export const Game = () => {
   const settingLegalMoves = (coord, type, color, moved) => {
     if (firstClick) {
       if (type === 'Pawn') {
-        setLegalMoves(getPawnMoves(coord, color, moved));
+        const moves = getPawnMoves(coord, color, moved);
+        dispatch({ type: 'movesForPieces', moves, coord });
       } else if (type === 'King') {
-        setLegalMoves(getKingMoves(coord, color));
+        const moves = getKingMoves(coord, color, moved);
+        dispatch({ type: 'movesForPieces', moves });
       } else if (type === 'Knight') {
-        setLegalMoves(getKnightMoves(coord, color));
+        const moves = getKnightMoves(coord, color);
+        dispatch({ type: 'movesForPieces', moves });
       } else if (type === 'Rook') {
-        setLegalMoves(getRookMoves(coord, color));
+        const moves = getRookMoves(coord, color);
+        dispatch({ type: 'movesForPieces', moves });
       } else if (type === 'Bishop') {
-        setLegalMoves(getBishopMoves(coord, color));
+        const moves = getBishopMoves(coord, color);
+        dispatch({ type: 'movesForPieces', moves });
       } else if (type === 'Queen') {
-        setLegalMoves(getQueenMoves(coord, color));
+        const moves = getQueenMoves(coord, color);
+        dispatch({ type: 'movesForPieces', moves });
       }
     }
   };
@@ -628,7 +713,7 @@ export const Game = () => {
             coord[1] >= 0
           ) {
             copyLegalMoves[coord[0]][coord[1]] = 'noPiece';
-            setLegalMovesBoard(copyLegalMoves);
+            dispatch({ type: 'legalMovesBoard', copyLegalMoves });
           }
         } else if (
           coord[0] <= 7 &&
@@ -637,7 +722,7 @@ export const Game = () => {
           coord[1] >= 0
         ) {
           copyLegalMoves[coord[0]][coord[1]] = 'piece';
-          setLegalMovesBoard(copyLegalMoves);
+          dispatch({ type: 'legalMovesBoard', copyLegalMoves });
         }
       }
     }
