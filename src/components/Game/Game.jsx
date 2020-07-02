@@ -304,14 +304,6 @@ export const Game = () => {
 
     const filterOutEmptyArray = tempMoves.filter((move) => move.length !== 0);
 
-    if (filterOutEmptyArray.length > 0) {
-      const filterdMoves = filterOutEmptyArray.filter(
-        (move) => move.toString() !== coord.toString(),
-      );
-      setActiveLegalMoves(filterdMoves, color);
-    } else {
-      setActiveLegalMoves(filterOutEmptyArray, color);
-    }
     return filterOutEmptyArray;
   };
 
@@ -339,14 +331,10 @@ export const Game = () => {
       continueLoop(move, 'King', color),
     );
 
-    const filteredCoord = finalMoves.filter(
-      (move) => coord.toString() !== move.toString(),
-    );
-    setActiveLegalMoves(filteredCoord, color);
     return finalMoves;
   };
 
-  const getKnightMoves = (coord, color) => {
+  const getKnightMoves = (coord) => {
     const generateLegalMoves = [
       [-2, 1],
       [-1, 2],
@@ -373,10 +361,6 @@ export const Game = () => {
 
     finalLegalMoves.push(coord);
 
-    const filteredCoord = finalLegalMoves.filter(
-      (move) => coord.toString() !== move.toString(),
-    );
-    setActiveLegalMoves(filteredCoord, color);
     return finalLegalMoves;
   };
 
@@ -439,10 +423,6 @@ export const Game = () => {
     generateLeft();
     generateRight();
 
-    const filteredCoord = tempMoves.filter(
-      (move) => coord.toString() !== move.toString(),
-    );
-    setActiveLegalMoves(filteredCoord, color);
     return tempMoves;
   };
 
@@ -525,10 +505,6 @@ export const Game = () => {
     generateDownLeft();
     generateUpLeft();
 
-    const filteredCoord = tempMoves.filter(
-      (move) => coord.toString() !== move.toString(),
-    );
-    setActiveLegalMoves(filteredCoord, color);
     return tempMoves;
   };
 
@@ -667,10 +643,6 @@ export const Game = () => {
     generateDownLeft();
     generateUpLeft();
 
-    const filteredCoord = tempMoves.filter(
-      (move) => coord.toString() !== move.toString(),
-    );
-    setActiveLegalMoves(filteredCoord, color);
     return tempMoves;
   };
 
@@ -678,21 +650,27 @@ export const Game = () => {
     if (firstClick) {
       if (type === 'Pawn') {
         const moves = getPawnMoves(coord, color, moved);
+        filterActiveLegalMoves(moves, coord, color);
         dispatch({ type: 'movesForPieces', moves, coord });
       } else if (type === 'King') {
         const moves = getKingMoves(coord, color, moved);
+        filterActiveLegalMoves(moves, coord, color);
         dispatch({ type: 'movesForPieces', moves });
       } else if (type === 'Knight') {
         const moves = getKnightMoves(coord, color);
+        filterActiveLegalMoves(moves, coord, color);
         dispatch({ type: 'movesForPieces', moves });
       } else if (type === 'Rook') {
         const moves = getRookMoves(coord, color);
+        filterActiveLegalMoves(moves, coord, color);
         dispatch({ type: 'movesForPieces', moves });
       } else if (type === 'Bishop') {
         const moves = getBishopMoves(coord, color);
+        filterActiveLegalMoves(moves, coord, color);
         dispatch({ type: 'movesForPieces', moves });
       } else if (type === 'Queen') {
         const moves = getQueenMoves(coord, color);
+        filterActiveLegalMoves(moves, coord, color);
         dispatch({ type: 'movesForPieces', moves });
       }
     }
@@ -725,6 +703,17 @@ export const Game = () => {
           dispatch({ type: 'legalMovesBoard', copyLegalMoves });
         }
       }
+    }
+  };
+
+  const filterActiveLegalMoves = (moves, coord, color) => {
+    if (moves.length > 0) {
+      const filterdMoves = moves.filter(
+        (move) => move.toString() !== coord.toString(),
+      );
+      setActiveLegalMoves(filterdMoves, color);
+    } else {
+      setActiveLegalMoves(moves, color);
     }
   };
 
